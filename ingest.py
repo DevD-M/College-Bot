@@ -2,20 +2,29 @@ from sentence_transformers import SentenceTransformer
 import faiss
 import numpy as np
 import pickle
+import os
 
 model = SentenceTransformer('all-MiniLM-L6-v2')
 
-with open('data/bennettuni_info.txt', 'r') as f:
-    text = f.read()
+all_chunks = []
 
-chunks = [chunk.strip() for chunk in text.split('\n\n') if chunk.strip()]
+for filename in os.listdir('data'):
+    if filename.endswith('.txt'):
+        with open(f'data/{filename}', 'r', encoding='utf-8') as f:
+            text = f.read()
+        lines = [l.strip() for l in text.splitlines() if len(l.strip()) > 0]
+        chunks = []
+        for i in range(0, len(lines), 10):
+            chunk = ' '.join(lines[i:i+10])
+            if len(chunk) > 50:
+                chunks.append(chunk)
+        print(f"{filename}: {len(chunks)} chunks")
+        all_chunks.extend(chunks)
 
-print(f"Total chunks: {len(chunks)}")
-for i, chunk in enumerate(chunks):
-    print(f"\nChunk {i}: {chunk[:60]}...")
+print(f"\nTotal chunks: {len(all_chunks)}")
 
-embeddings = model.encode(chunks)
-print(f"\nEmbedding shape: {embeddings.shape}")
+embeddings = model.encode(all_chunks, show_progress_bar=True)
+print(f"Embedding shape: {embeddings.shape}")
 
 dimension = embeddings.shape[1]
 index = faiss.IndexFlatL2(dimension)
@@ -23,6 +32,6 @@ index.add(np.array(embeddings))
 
 faiss.write_index(index, 'bennett.index')
 with open('chunks.pkl', 'wb') as f:
-    pickle.dump(chunks, f)
+    pickle.dump(all_chunks, f)
 
 print("\nIndex saved successfully!")
