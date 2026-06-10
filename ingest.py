@@ -7,21 +7,25 @@ import os
 model = SentenceTransformer('all-MiniLM-L6-v2')
 
 all_chunks = []
-
 for filename in os.listdir('data'):
     if filename.endswith('.txt'):
         with open(f'data/{filename}', 'r', encoding='utf-8') as f:
             text = f.read()
-        lines = [l.strip() for l in text.splitlines() if len(l.strip()) > 0]
-        chunks = []
-        for i in range(0, len(lines), 10):
-            chunk = ' '.join(lines[i:i+10])
-            if len(chunk) > 50:
-                chunks.append(chunk)
+        
+        if filename == 'bennettuni_info.txt':
+            # double newline se split karo
+            chunks = [c.strip() for c in text.split('\n\n') if len(c.strip()) > 50]
+        else:
+            # baaki files ke liye 10 lines ka chunk
+            lines = [l.strip() for l in text.splitlines() if len(l.strip()) > 0]
+            chunks = []
+            for i in range(0, len(lines), 10):
+                chunk = ' '.join(lines[i:i+10])
+                if len(chunk) > 50:
+                    chunks.append(chunk)
+        
         print(f"{filename}: {len(chunks)} chunks")
         all_chunks.extend(chunks)
-
-print(f"\nTotal chunks: {len(all_chunks)}")
 
 embeddings = model.encode(all_chunks, show_progress_bar=True)
 print(f"Embedding shape: {embeddings.shape}")
