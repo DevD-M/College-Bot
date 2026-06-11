@@ -44,9 +44,12 @@ BBA Global (1+1+1) - University of Reading, UK
 B. Tech (Electronics Engineering) VLSI Design and Technology Powered by L&T EduTech
 B. Tech (Mechanical Engineering) Smart Manufacturing Powered by L&T EduTech
 B. Tech (Computer Science Engineering) AI Techniques and ML Algorithms Powered by L&T EduTech
-B. Tech CSE Cyber Security powered by KPMG in partnership with Macquarie University, Australia
-MBA (Data Science & Business Analytics) Powered by KPMG
-MBA (Strategy, Management & Consulting) Powered by KPMG
+B. Tech CSE Cyber Security Co-created & Co-delivered by KPMG in partnership with Macquarie University, Australia
+BBA (Gen AI) Co-created & Co-delivered by KPMG
+BBA (Data Analytics) Co-created & Co-delivered by KPMG
+MBA (Data Science & Business Analytics) Co-created & Co-delivered by KPMG
+MBA (Strategy, Management & Consulting) Co-created & Co-delivered by KPMG
+M.A. in Public Policy Co-created & Co-delivered by KPMG
 B. Des (Hons.) Intelligent Textile Design
 B. Des (Hons.) Advanced Animation & VFX in partnership with CII
 B.Tech + M.Tech (Computer Science & Engineering) (Dual Degree)
@@ -65,9 +68,12 @@ B.A. (Film, TV & Web Series/Mass Comm.) Global (2+1) – University of Essex, UK
 B. Tech (Electronics Engineering) VLSI Design and Technology Powered by L&T EduTech
 B. Tech (Mechanical Engineering) Smart Manufacturing Powered by L&T EduTech
 B. Tech (Computer Science Engineering) AI Techniques and ML Algorithms Powered by L&T EduTech
-B. Tech CSE Cyber Security powered by KPMG in partnership with Macquarie University, Australia
-MBA (Data Science & Business Analytics) Powered by KPMG
-MBA (Strategy, Management & Consulting) Powered by KPMG
+B. Tech CSE Cyber Security Co-created & Co-delivered by KPMG in partnership with Macquarie University, Australia
+BBA (Gen AI) Co-created & Co-delivered by KPMG
+BBA (Data Analytics) Co-created & Co-delivered by KPMG
+MBA (Data Science & Business Analytics) Co-created & Co-delivered by KPMG
+MBA (Strategy, Management & Consulting) Co-created & Co-delivered by KPMG
+M.A. in Public Policy Co-created & Co-delivered by KPMG
 School of Computer Science Engineering & Technology
 M. Tech (Computer Science & Engineering) + Ph.D. (Dual Degree)
 B.Tech (Electronics & Computer Engineering)
