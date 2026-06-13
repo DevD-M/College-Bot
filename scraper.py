@@ -49,6 +49,7 @@ pages = [
     "https://www.bennett.edu.in/medical/",
     "https://www.bennett.edu.in/anti-ragging/",
     "https://www.bennett.edu.in/entrepreneurship/",
+    "https://www.bennett.edu.in/admission/fee-structure/"
 ]
 
 def scrape_page(url):

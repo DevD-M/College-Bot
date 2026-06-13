@@ -1,0 +1,11 @@
+fastapi
+uvicorn
+groq
+sentence-transformers
+faiss-cpu
+numpy
+pickle5
+python-dotenv
+requests
+beautifulsoup4
+streamlit
