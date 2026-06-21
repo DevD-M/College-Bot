@@ -20,3 +20,15 @@ Add GROQ_API_KEY in .env file, then:
 python ingest.py   # build index
 python app.py      # run chatbot
 ```
+## 🚀 Live Demo
+- **Frontend:** https://bennett-allinfo-buddy.lovable.app
+- **Backend API:** https://college-bot-production-9230.up.railway.app
+- **API Docs:** https://college-bot-production-9230.up.railway.app/docs
+
+## 🛠️ Tech Stack
+- **LLM:** Groq LLaMA 3.1 8B
+- **Embeddings:** all-MiniLM-L6-v2
+- **Vector DB:** FAISS
+- **Backend:** FastAPI (Railway)
+- **Frontend:** React (Lovable)
+- **Scraping:** BeautifulSoup
