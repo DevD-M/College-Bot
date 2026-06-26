@@ -4,7 +4,7 @@ from typing import Annotated
 from typing_extensions import TypedDict
 
 from langchain_core.tools import tool
-from langchain_core.messages import ToolMessage
+from langchain_core.messages import ToolMessage, SystemMessage, AIMessage
 from langchain_groq import ChatGroq
 from langgraph.graph import StateGraph, END
 from langgraph.graph.message import add_messages
@@ -12,7 +12,11 @@ from langgraph.graph.message import add_messages
 from retriever import retrieve
 
 load_dotenv()
-
+SYSTEM_PROMPT = SystemMessage(content="""You are CollegeBot, an assistant 
+for Bennett University. Use the search tool ONCE per question. If the 
+tool returns relevant information, use it to answer immediately — do not 
+search again with different queries. Answer only based on the retrieved 
+information.""")
 # ---- TOOL ----
 @tool
 def search_bennett_info(query: str) -> str:
@@ -36,20 +40,39 @@ llm_with_tools = llm.bind_tools([search_bennett_info])
 
 # ---- NODES ----
 def call_llm(state: CollegeBotState):
-    response = llm_with_tools.invoke(state["messages"])
+    messages = state["messages"]
+    if not any(isinstance(m, SystemMessage) for m in messages):
+        messages = [SYSTEM_PROMPT] + messages
+    
+    tool_call_count = sum(1 for m in messages if isinstance(m, ToolMessage))
+    
+    try:
+        if tool_call_count >= 3:
+            # Limit hit ho gaya — LLM ko tools bind hi nahi karna, 
+            # sirf available info se answer banane do
+            response = llm.invoke(messages)
+        else:
+            response = llm_with_tools.invoke(messages)
+    except Exception as e:
+        response = AIMessage(content="Sorry, I had trouble processing that. Could you rephrase your question?")
+    
     return {"messages": [response]}
 
 def call_tool(state: CollegeBotState):
+    print("DEBUG: call_tool node activated!")  # 🆕 yeh line add kar
     last_message = state["messages"][-1]
     tool_call = last_message.tool_calls[0]
     result = search_bennett_info.invoke(tool_call["args"])
+    print(f"DEBUG: Tool returned: {result[:200]}")  # 🆕 yeh bhi add kar
     tool_message = ToolMessage(content=result, tool_call_id=tool_call["id"])
     return {"messages": [tool_message]}
 
 # ---- CONDITIONAL EDGE ----
 def should_continue(state: CollegeBotState):
     last_message = state["messages"][-1]
-    if last_message.tool_calls:
+    tool_call_count = sum(1 for m in state["messages"] if isinstance(m, ToolMessage))
+    
+    if last_message.tool_calls and tool_call_count < 3:
         return "call_tool"
     return "end"
 
