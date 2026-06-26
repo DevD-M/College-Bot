@@ -21,7 +21,7 @@ python ingest.py   # build index
 python app.py      # run chatbot
 ```
 ## 🚀 Live Demo
-- **Frontend:** https://bennett-allinfo-buddy.lovable.app
+- **Frontend:** https://campuscompass-bu.lovable.app 
 - **Backend API:** https://college-bot-production-9230.up.railway.app
 - **API Docs:** https://college-bot-production-9230.up.railway.app/docs
 
