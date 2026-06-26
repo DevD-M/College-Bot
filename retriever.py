@@ -9,7 +9,7 @@ index = faiss.read_index('bennett.index')
 with open('chunks.pkl', 'rb') as f:
     chunks = pickle.load(f)
 
-def retrieve(query, top_k=3):
+def retrieve(query, top_k=2):
     query_vector = model.encode([query])
     distances, indices = index.search(np.array(query_vector), top_k)
     results = []
