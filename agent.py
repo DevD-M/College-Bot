@@ -35,7 +35,7 @@ class CollegeBotState(TypedDict):
     messages: Annotated[list, add_messages]
 
 # ---- LLM + TOOLS ----
-llm = ChatGroq(model="llama-3.1-8b-instant")
+llm = ChatGroq(model="openai/gpt-oss-20b")
 llm_with_tools = llm.bind_tools([search_bennett_info])
 
 # ---- NODES ----

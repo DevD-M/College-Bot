@@ -8,7 +8,8 @@ app = FastAPI()
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  
+    allow_origins=["https://campuscompass-bu.lovable.app"],  # tera exact frontend domain
+    allow_credentials=True,  # yeh naya add karna hai — cookies allow karne ke liye
     allow_methods=["*"],
     allow_headers=["*"],
 )
