@@ -5,7 +5,7 @@ A RAG (Retrieval Augmented Generation) based chatbot for Bennett University stud
 ## Tech Stack
 - FAISS — vector similarity search
 - Sentence Transformers (all-MiniLM-L6-v2) — embeddings
-- Groq (LLaMA 3.1) — LLM for answer generation
+- Groq (`openai/gpt-oss-20b`) — LLM for answer generation
 - Python
 
 ## Architecture
@@ -26,9 +26,12 @@ python app.py      # run chatbot
 - **API Docs:** https://college-bot-production-9230.up.railway.app/docs
 
 ## 🛠️ Tech Stack
-- **LLM:** Groq LLaMA 3.1 8B
+- **LLM:** Groq `openai/gpt-oss-20b`
 - **Embeddings:** all-MiniLM-L6-v2
 - **Vector DB:** FAISS
 - **Backend:** FastAPI (Railway)
 - **Frontend:** React (Lovable)
 - **Scraping:** BeautifulSoup
+
+## Note
+Originally built on `llama-3.1-8b-instant`, migrated to `openai/gpt-oss-20b` ahead of Groq's August 16, 2026 deprecation of the former. Same API endpoint, no other changes required. See `NOTES.md` for the full migration writeup.
