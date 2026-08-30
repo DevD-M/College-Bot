@@ -3,13 +3,18 @@ from pydantic import BaseModel
 from fastapi.middleware.cors import CORSMiddleware 
 from app import ask
 from agent import app_graph  
+from auth_routes import router as auth_router
+from conversation_routes import router as conversation_router
 
 app = FastAPI()
 
+app.include_router(auth_router)
+app.include_router(conversation_router)
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["https://campuscompass-bu.lovable.app"],  # tera exact frontend domain
-    allow_credentials=True,  # yeh naya add karna hai — cookies allow karne ke liye
+    allow_origins=["https://campuscompass-bu.lovable.app"], 
+    allow_credentials=True,  
     allow_methods=["*"],
     allow_headers=["*"],
 )

@@ -17,6 +17,7 @@ for Bennett University. Use the search tool ONCE per question. If the
 tool returns relevant information, use it to answer immediately — do not 
 search again with different queries. Answer only based on the retrieved 
 information.""")
+
 # ---- TOOL ----
 @tool
 def search_bennett_info(query: str) -> str:
@@ -43,36 +44,60 @@ def call_llm(state: CollegeBotState):
     messages = state["messages"]
     if not any(isinstance(m, SystemMessage) for m in messages):
         messages = [SYSTEM_PROMPT] + messages
-    
+
     tool_call_count = sum(1 for m in messages if isinstance(m, ToolMessage))
-    
+
     try:
-        if tool_call_count >= 3:
-            # Limit hit ho gaya — LLM ko tools bind hi nahi karna, 
-            # sirf available info se answer banane do
+        # FIX: cap lowered from 3 -> 1. Ab safe hai kyunki tool result khud
+        # mein explicit "don't search again" instruction carry karta hai
+        # (see call_tool below), so LLM ko dobara confuse hone ki zarurat nahi.
+        if tool_call_count >= 1:
             response = llm.invoke(messages)
         else:
             response = llm_with_tools.invoke(messages)
     except Exception as e:
         response = AIMessage(content="Sorry, I had trouble processing that. Could you rephrase your question?")
-    
+
     return {"messages": [response]}
 
 def call_tool(state: CollegeBotState):
-    print("DEBUG: call_tool node activated!")  # 🆕 yeh line add kar
+    print("DEBUG: call_tool node activated!")
     last_message = state["messages"][-1]
-    tool_call = last_message.tool_calls[0]
-    result = search_bennett_info.invoke(tool_call["args"])
-    print(f"DEBUG: Tool returned: {result[:200]}")  # 🆕 yeh bhi add kar
-    tool_message = ToolMessage(content=result, tool_call_id=tool_call["id"])
-    return {"messages": [tool_message]}
+
+    # FIX: handle ALL tool calls in this turn, not just tool_calls[0].
+    # Groq models can emit parallel tool calls; previously only the first
+    # one ever got a ToolMessage, leaving the graph in an incomplete state.
+    tool_messages = []
+    for tool_call in last_message.tool_calls:
+        result = search_bennett_info.invoke(tool_call["args"])
+        print(f"DEBUG: Tool returned: {result[:200]}")
+
+        # FIX: inject explicit instruction into the tool result itself.
+        # Root cause of the loop was that "search ONCE" only existed as a
+        # soft system-prompt instruction — nothing at the code/state level
+        # stopped the LLM from deciding a 2nd/3rd search was needed if it
+        # judged the first result insufficient. Putting the instruction
+        # directly in the ToolMessage gives the LLM a hard, local signal
+        # right where it's making the next decision.
+        annotated_result = (
+            f"{result}\n\n"
+            "[System note: This is the retrieved information for the query. "
+            "Answer the user's question using ONLY this information. "
+            "Do not call the search tool again for this question.]"
+        )
+        tool_messages.append(
+            ToolMessage(content=annotated_result, tool_call_id=tool_call["id"])
+        )
+
+    return {"messages": tool_messages}
 
 # ---- CONDITIONAL EDGE ----
 def should_continue(state: CollegeBotState):
     last_message = state["messages"][-1]
     tool_call_count = sum(1 for m in state["messages"] if isinstance(m, ToolMessage))
-    
-    if last_message.tool_calls and tool_call_count < 3:
+
+    # FIX: cap lowered from 3 -> 1, matching call_llm's cap above.
+    if last_message.tool_calls and tool_call_count < 1:
         return "call_tool"
     return "end"
 
