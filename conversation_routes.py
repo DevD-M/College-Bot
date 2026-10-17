@@ -1,5 +1,4 @@
-# conversation_routes.py
-
+from cache_utils import get_cached_response, set_cached_response
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from typing import List
@@ -59,19 +58,22 @@ def send_message(
     try:
         user_message = Message(conversation_id=conversation_id, role="user", content=message_data.content)
         db.add(user_message)
-        # NOTE: commit() abhi nahi kiya
 
-        result = app_graph.invoke({"messages": [("user", message_data.content)]})
-        bot_reply = result["messages"][-1].content
+        bot_reply = get_cached_response(message_data.content)
+
+        if bot_reply is None:
+            result = app_graph.invoke({"messages": [("user", message_data.content)]})
+            bot_reply = result["messages"][-1].content
+            set_cached_response(message_data.content, bot_reply)
 
         bot_message = Message(conversation_id=conversation_id, role="bot", content=bot_reply)
         db.add(bot_message)
 
-        db.commit()   # <-- SIRF YAHA, dono successful hone ke baad, ek hi commit
+        db.commit()
         db.refresh(bot_message)
 
     except Exception as e:
-        db.rollback()   # <-- agar kahi bhi beech mein fail hua, sab undo
+        db.rollback()
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Failed to process message")
 
     return bot_message
